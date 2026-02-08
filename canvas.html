@@ -152,9 +152,9 @@
       transform: rotate(2deg);
     }
 
-    /* Frame border - vintage wood, bigger */
+    /* Frame border - vintage wood */
     .frame-border {
-      padding: 25px;
+      padding: 18px;
       background: linear-gradient(135deg, #8B7355 0%, #6B5644 100%);
       box-shadow: 
         inset 0 2px 4px rgba(255, 255, 255, 0.3),
@@ -163,26 +163,47 @@
       display: block;
     }
 
-    /* Varying frame styles */
-    .frame:nth-child(2n) .frame-border {
+    /* Varying frame styles with different designs */
+    .frame:nth-child(1) .frame-border {
+      background: linear-gradient(135deg, #8B7355 0%, #6B5644 100%);
+      padding: 20px;
+      border: 2px solid #5C4033;
+    }
+
+    .frame:nth-child(2) .frame-border {
       background: linear-gradient(135deg, #A0826D 0%, #8B7355 100%);
-      padding: 30px;
-    }
-
-    .frame:nth-child(3n) .frame-border {
-      background: linear-gradient(135deg, #5C4033 0%, #3E2723 100%);
       padding: 22px;
+      border: 3px double #6B5644;
     }
 
-    .frame:nth-child(5n) .frame-border {
+    .frame:nth-child(3) .frame-border {
+      background: linear-gradient(135deg, #5C4033 0%, #3E2723 100%);
+      padding: 16px;
+      border: 1px solid #8B7355;
+    }
+
+    .frame:nth-child(4) .frame-border {
       background: linear-gradient(135deg, #D4A574 0%, #B8956A 100%);
-      padding: 28px;
+      padding: 24px;
+      border: 2px ridge #A0826D;
+    }
+
+    .frame:nth-child(5) .frame-border {
+      background: linear-gradient(135deg, #8B7355 0%, #6B5644 100%);
+      padding: 19px;
+      border: 2px solid #5C4033;
+    }
+
+    .frame:nth-child(6) .frame-border {
+      background: linear-gradient(135deg, #A0826D 0%, #8B7355 100%);
+      padding: 21px;
+      border: 1px solid #D4A574;
     }
 
     /* Inner frame detail */
     .frame-inner {
-      border: 3px solid rgba(255, 255, 255, 0.2);
-      padding: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      padding: 8px;
       background: #1a1a1a;
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
       display: block;
@@ -266,13 +287,13 @@
       justify-content: center;
     }
 
-    /* Frame in modal - very large */
+    /* Frame in modal - thinner */
     .modal-frame {
       display: inline-block;
     }
 
     .modal-frame-border {
-      padding: 35px;
+      padding: 25px;
       background: linear-gradient(135deg, #8B7355 0%, #6B5644 100%);
       box-shadow: 
         inset 0 2px 4px rgba(255, 255, 255, 0.3),
@@ -281,33 +302,32 @@
     }
 
     .modal-frame-inner {
-      border: 3px solid rgba(255, 255, 255, 0.2);
-      padding: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      padding: 10px;
       background: #1a1a1a;
       box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
     }
 
     .modal-image {
       display: block;
-      max-height: 88vh;
-      max-width: 75vw;
+      max-height: 75vh;
+      max-width: 65vw;
       width: auto;
       height: auto;
-      min-width: 500px;
+      min-width: 400px;
     }
 
-    /* Description panel - separate from frame */
+    /* Description panel - separate from frame, center aligned */
     .modal-details {
-      width: 380px;
-      min-width: 380px;
+      width: 360px;
+      min-width: 360px;
+      max-width: 360px;
       background: var(--bg);
       border-radius: 8px;
       padding: 2.5rem;
-      max-height: 80vh;
-      overflow-y: auto;
-      align-self: stretch;
       display: flex;
       flex-direction: column;
+      align-self: center;
     }
       padding: 2rem;
     }
@@ -566,7 +586,7 @@
           <div class="modal-meta">Digital Scrapbook • Summer 2024</div>
           <p class="modal-description">A digital collage documenting an unforgettable summer trip to New York City during 4th of July 2024 with my high school friends. Five days of exploration before we all scattered to different paths.
           
-          The composition weaves together photographs, ticket stubs, and moments from our journey—Times Square's energy, quiet moments in Central Park, views from the Empire State Building, late-night pizza in Brooklyn. Each element captures the inside jokes, spontaneous detours, and that mix of exhaustion and exhilaration.
+          The composition weaves together photographs, ticket stubs, and moments from our journey: Times Square's energy, quiet moments in Central Park, views from the Empire State Building, late-night pizza in Brooklyn. Each element captures the inside jokes, spontaneous detours, and that mix of exhaustion and exhilaration.
           
           The layered collage format mirrors how memories actually work: fragments layered on top of each other, overlapping, always connected. This is part of my ongoing project of documenting life as it happens, fighting my fear of forgetting.</p>
         </div>
