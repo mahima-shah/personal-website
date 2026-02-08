@@ -102,20 +102,26 @@
     .content {
       flex: 1;
       margin-bottom: 2rem;
+      display: flex;
+      justify-content: center;
     }
 
     /* Film strip contact sheet grid */
     .film-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
       gap: 2rem;
-      max-width: 1200px;
+      width: 100%;
+      max-width: 1400px;
+      justify-items: center;
     }
 
     .film-strip {
       position: relative;
       cursor: pointer;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+      max-width: 450px;
     }
 
     .film-strip:hover {
@@ -524,7 +530,7 @@
 <body>
   <div class="container">
     <header>
-      <a href="portfolio-complete.html" class="back-link">Back to home</a>
+      <a href="index.html" class="back-link">Back to home</a>
       <h1>Scenes</h1>
       <p class="subtitle">things I film.</p>
     </header>

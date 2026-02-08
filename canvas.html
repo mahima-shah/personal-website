@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas — Mahima Shah</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap');
+
+    :root {
+      --bg: #f4f1ed;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --accent: #2d2d2d;
+      --wall: #e8e4de;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --text: #E8E6E3;
+        --text-muted: #9E9E9E;
+        --accent: #E8E6E3;
+        --wall: #1a1a1a;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--wall);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 3.5rem 2rem 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      width: 100%;
+      margin-bottom: 2.5rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: var(--accent);
+    }
+
+    .back-link::before {
+      content: '←';
+      font-size: 1.2rem;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 300;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .intro {
+      max-width: 100%;
+      margin-bottom: 3.5rem;
+      line-height: 1.8;
+    }
+
+    .intro p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      font-weight: 400;
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    /* Gallery wall - structured grid with 3 columns */
+    .gallery-wall {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem 2.5rem;
+      width: 100%;
+      padding: 2rem 0;
+    }
+
+    /* Frame wrapper */
+    .frame {
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      justify-self: center;
+      display: inline-block;
+    }
+
+    .frame:hover {
+      transform: scale(1.05) rotate(0deg) !important;
+      z-index: 50;
+    }
+
+    /* Slight rotation for variety */
+    .frame:nth-child(6n+1) {
+      transform: rotate(-1deg);
+    }
+
+    .frame:nth-child(6n+2) {
+      transform: rotate(1deg);
+    }
+
+    .frame:nth-child(6n+3) {
+      transform: rotate(-2deg);
+    }
+
+    .frame:nth-child(6n+4) {
+      transform: rotate(1deg);
+    }
+
+    .frame:nth-child(6n+5) {
+      transform: rotate(-1deg);
+    }
+
+    .frame:nth-child(6n) {
+      transform: rotate(2deg);
+    }
+
+    /* Frame border - vintage wood, bigger */
+    .frame-border {
+      padding: 25px;
+      background: linear-gradient(135deg, #8B7355 0%, #6B5644 100%);
+      box-shadow: 
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+        0 8px 24px rgba(0, 0, 0, 0.2);
+      display: block;
+    }
+
+    /* Varying frame styles */
+    .frame:nth-child(2n) .frame-border {
+      background: linear-gradient(135deg, #A0826D 0%, #8B7355 100%);
+      padding: 30px;
+    }
+
+    .frame:nth-child(3n) .frame-border {
+      background: linear-gradient(135deg, #5C4033 0%, #3E2723 100%);
+      padding: 22px;
+    }
+
+    .frame:nth-child(5n) .frame-border {
+      background: linear-gradient(135deg, #D4A574 0%, #B8956A 100%);
+      padding: 28px;
+    }
+
+    /* Inner frame detail */
+    .frame-inner {
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      background: #1a1a1a;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+      display: block;
+    }
+
+    /* Artwork - maintains natural aspect ratio */
+    .artwork {
+      display: block;
+      background: #fff;
+      line-height: 0;
+    }
+
+    .artwork img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Placeholder for empty frames */
+    .artwork.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    /* Consistent sizing for all frames */
+    .frame .artwork,
+    .frame .artwork img {
+      width: 320px;
+    }
+
+    /* Modal with framed image */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modal - full screen overlay */
+    .modal-content {
+      max-width: 1400px;
+      width: 95%;
+      display: flex;
+      gap: 3rem;
+      animation: fadeIn 0.3s ease;
+      align-items: center;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-image-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Frame in modal - very large */
+    .modal-frame {
+      display: inline-block;
+    }
+
+    .modal-frame-border {
+      padding: 35px;
+      background: linear-gradient(135deg, #8B7355 0%, #6B5644 100%);
+      box-shadow: 
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+        0 16px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-frame-inner {
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      padding: 12px;
+      background: #1a1a1a;
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-image {
+      display: block;
+      max-height: 88vh;
+      max-width: 75vw;
+      width: auto;
+      height: auto;
+      min-width: 500px;
+    }
+
+    /* Description panel - separate from frame */
+    .modal-details {
+      width: 380px;
+      min-width: 380px;
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 2.5rem;
+      max-height: 80vh;
+      overflow-y: auto;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+    }
+      padding: 2rem;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+
+    .close-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .modal-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    .modal-meta {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-description {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 3rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .footer-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    .footer-links a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    @media (max-width: 1200px) {
+      .gallery-wall {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .gallery-wall {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .frame {
+        transform: rotate(0deg) !important;
+      }
+
+      .modal-content {
+        flex-direction: column;
+        width: 95%;
+      }
+
+      .modal-details {
+        width: 100%;
+        min-width: auto;
+      }
+
+      .modal-image {
+        max-width: 90vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="index.html" class="back-link">Back to home</a>
+      <h1>Canvas</h1>
+      <p class="subtitle">things I make.</p>
+    </header>
+
+    <div class="intro">
+      <p>I have always been drawn to making things with my hands. Growing up, art and craft were a constant presence in my life, something I picked up from my mother and my grandmother. There were always projects and ideas in motion, and creativity felt woven into everyday life rather than set apart from it.</p>
+      
+      <p>As I got older, that curiosity found its way online. I spent hours watching DIY videos and trying to recreate what I saw, experimenting with paintings, crafts, and even clothing. I later enrolled in formal art classes that introduced me to more technical approaches, from still life and figure work to geometry, composition, and lettering. While I learned a lot, the structure eventually became overwhelming, and what once felt playful started to feel like pressure.</p>
+      
+      <p>Over time, I realized I am most drawn to making without expectations. I gravitate toward craft, experimentation, and creative play. After finally getting an iPad, I began exploring digital art as a way to relax and turn memories into something visual. Along the way, I also explored tools across the Adobe suite, working through design, composition, and visual storytelling rather than traditional sketches alone.</p>
+      
+      <p>This page is a small collection of that exploration. It is not about perfection or polish, but about returning to creativity for the joy of it, following ideas where they lead, and valuing the process even when projects remain unfinished. As I grow older, I am finding my way back to these practices not because I am good at them, but because they make me feel present.</p>
+      
+      <p>Below is a small gallery of work from different moments and mediums. Feel free to take your time with it.</p>
+    </div>
+
+    <div class="content">
+      <div class="gallery-wall">
+        <!-- Frame 1 - Robot Panda -->
+        <div class="frame" onclick="openModal('modal1')">
+          <div class="frame-border">
+            <div class="frame-inner">
+              <div class="artwork">
+                <img src="artwork/robot_panda.jpg" alt="Robot Panda">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frame 2 - New York Scrapbook -->
+        <div class="frame" onclick="openModal('modal2')">
+          <div class="frame-border">
+            <div class="frame-inner">
+              <div class="artwork">
+                <img src="artwork/ny_scrapbook.png" alt="New York Scrapbook">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frame 3 - Placeholder -->
+        <div class="frame" onclick="openModal('modal3')">
+          <div class="frame-border">
+            <div class="frame-inner">
+              <div class="artwork placeholder" style="background: #E76F51; width: 320px; aspect-ratio: 4/3;">
+                Artwork 3
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frame 4 - Placeholder -->
+        <div class="frame" onclick="openModal('modal4')">
+          <div class="frame-border">
+            <div class="frame-inner">
+              <div class="artwork placeholder" style="background: #2A9D8F; width: 280px; aspect-ratio: 1/1;">
+                Artwork 4
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frame 5 - Placeholder -->
+        <div class="frame" onclick="openModal('modal5')">
+          <div class="frame-border">
+            <div class="frame-inner">
+              <div class="artwork placeholder" style="background: #F4A261; width: 340px; aspect-ratio: 16/9;">
+                Artwork 5
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frame 6 - Placeholder -->
+        <div class="frame" onclick="openModal('modal6')">
+          <div class="frame-border">
+            <div class="frame-inner">
+              <div class="artwork placeholder" style="background: #D62828; width: 300px; aspect-ratio: 5/4;">
+                Artwork 6
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Robot Panda -->
+    <div class="modal-overlay" id="modal1" onclick="closeModal('modal1')">
+      <button class="close-button" onclick="closeModal('modal1')">×</button>
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-image-container">
+          <div class="modal-frame">
+            <div class="modal-frame-border">
+              <div class="modal-frame-inner">
+                <img src="artwork/robot_panda.jpg" alt="Robot Panda" class="modal-image">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-details">
+          <h2 class="modal-title">Robot Panda</h2>
+          <div class="modal-meta">Adobe Illustrator • Digital Art • 2024</div>
+          <p class="modal-description">A character design that merges the endearing qualities of a panda with futuristic robotic elements. Created in Adobe Illustrator using clean vector lines and a vibrant color palette of teals, blues, and warm orange accents.
+          
+          The design features mechanical details like visible gears, articulated robotic joints, and an embedded control panel, while maintaining playful charm through oversized eyes and gentle expression. The bamboo stick grounds the character in its natural origins.
+          
+          This piece explores my interest in bridging different worlds—the natural cuteness of wildlife and the sleek precision of robotics.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for New York Scrapbook -->
+    <div class="modal-overlay" id="modal2" onclick="closeModal('modal2')">
+      <button class="close-button" onclick="closeModal('modal2')">×</button>
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-image-container">
+          <div class="modal-frame">
+            <div class="modal-frame-border">
+              <div class="modal-frame-inner">
+                <img src="artwork/ny_scrapbook.png" alt="New York Scrapbook" class="modal-image">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-details">
+          <h2 class="modal-title">New York Scrapbook</h2>
+          <div class="modal-meta">Digital Scrapbook • Summer 2024</div>
+          <p class="modal-description">A digital collage documenting an unforgettable summer trip to New York City during 4th of July 2024 with my high school friends. Five days of exploration before we all scattered to different paths.
+          
+          The composition weaves together photographs, ticket stubs, and moments from our journey—Times Square's energy, quiet moments in Central Park, views from the Empire State Building, late-night pizza in Brooklyn. Each element captures the inside jokes, spontaneous detours, and that mix of exhaustion and exhilaration.
+          
+          The layered collage format mirrors how memories actually work: fragments layered on top of each other, overlapping, always connected. This is part of my ongoing project of documenting life as it happens, fighting my fear of forgetting.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-links">
+        <a href="/cdn-cgi/l/email-protection#ec818d8485818d9f848d84949596ac8b818d8580c28f8381">Email</a>
+        <a href="https://www.linkedin.com/in/shahmahima/" target="_blank">LinkedIn</a>
+        <a href="https://www.instagram.com/mahimashahh/" target="_blank">Instagram</a>
+        <a href="https://www.youtube.com/@mahimashah" target="_blank">YouTube</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+          modal.classList.remove('active');
+        });
+        document.body.style.overflow = 'auto';
+      }
+    });
+  </script>
+</body>
+</html>
